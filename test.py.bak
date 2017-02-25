@@ -1,0 +1,35 @@
+# -*- coding:UTF-8 -*-
+'''
+Created on 2016年11月21日
+@author: Administrator
+'''
+import httplib2  
+import xml.dom.minidom 
+edgelist = []
+edge = {}
+h = httplib2.Http(".cache")  
+resp, content = h.request("http://127.0.0.1:12345/", "GET")  
+print resp
+print content
+content = content.decode('utf-8')
+dom = xml.dom.minidom.parseString(content);
+table  =  dom.getElementsByTagName( "topology" )[0]  
+namelist  =  table.getElementsByTagName( "edge" )  
+for name in namelist:
+#src = name.getElementsByTagName("src")[0]
+    
+    categorylist = name.getElementsByTagName("category")
+
+    addresslist = name.getElementsByTagName("address")
+    for i in range(2):
+        category = categorylist[i]
+        textNode = category.childNodes[0].nodeValue.replace('\t','').replace('\n','').replace(' ','')
+        address = addresslist[i]
+        textNode1 = address.childNodes[0].nodeValue.replace('\t','').replace('\n','').replace(' ','')
+        edge[textNode1] = textNode
+        edgelist.append(edge)
+        edge = {}
+#edge = edgelist[1]
+for edge in edgelist:
+    for key in edge:
+        print key, 'corresponds to', edge[key]

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<topology xmlns="cquptSDN:network-topology">
+    <num>1</num>
+    <edge>
+        <src>
+            <category>
+                1
+            </category>
+            <address>
+                001
+            </address>
+        </src>
+        <dst>
+            <category>
+                2
+            </category>
+            <address>
+                002
+            </address>
+        </dst>
+        <LinkQuality>1</LinkQuality>
+    </edge>  
+</topology>
