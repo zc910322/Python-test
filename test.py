@@ -275,7 +275,30 @@ def createSuperframe(shortaddr, network_n):
     superframe[1] = num
     return superframe
 
+def createLinktable(shortaddr, network_n):
+    '''
 
+    :param shortaddr:
+    :param network_n:
+    :return: 链路表信息，结构为[命令,数量,[短地址,父节点地址],[短地址,父节点地址].....]
+    '''
+    Linktable = []
+    num = 0
+    Linktable.append('setlinktable')
+    Linktable.append(num)
+
+    for key in network_n.pathlist:
+        tmp = 0
+        for i in key:
+            if(i == shortaddr):
+                table = []
+                table.append(shortaddr)
+                table.append(key[tmp - 1])
+                Linktable.append(table)
+                num = num + 1
+            tmp = tmp + 1
+    Linktable[1] = num
+    return Linktable
 for key in network_1.deviceinfo:
     if(network_1.deviceinfo[key] == '2'):
         routetable = createRoutetable(key, network_1)
@@ -287,10 +310,14 @@ for key in network_1.deviceinfo:
 # print("mappingtable: %s" %mappingtable)
 # doc = multhreading_new.setxml(mappingtable)
 # print("mapping xml: %s" %doc)
-superframe = createSuperframe('0002', network_1)
-print "superframe: %s" %superframe
-doc = multhreading_new.setxml(superframe)
-print "superframe xml: %s" %doc
+# superframe = createSuperframe('0002', network_1)
+# print "superframe: %s" %superframe
+# doc = multhreading_new.setxml(superframe)
+# print "superframe xml: %s" %doc
+linktable = createLinktable('0002', network_1)
+print "linktable: %s" %linktable
+doc = multhreading_new.setxml(linktable)
+print "linktable xml: %s" %doc
 # doc = multhreading_new.setxml(routetable)
 # print("route xml: %s" %doc)
 # shortaddress = '002'

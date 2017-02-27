@@ -141,10 +141,45 @@ def setxml(managerList):
             nodesuperframe.appendChild(nodeNumberSlots)
             nodesuperframe.appendChild(nodeActiveFlag)
             nodesuperframe.appendChild(nodeActiveSlot)
-            nodeManager.appendChild(nodesuperframe)
 
-            root.appendChild(nodeManager)
+            root.appendChild(nodesuperframe)
+    elif managerList[0] == 'setlinktable':
+        doc = xml.dom.minidom.Document()
+        root = doc.createElement('linktable')  # 设置根节点的属性
+        root.setAttribute('xmlns', 'cquptSDN:linktable')
+        # 将根节点添加到文档对象中
+        doc.appendChild(root)
 
+        nodeManager = doc.createElement('num')
+        nodeManager.appendChild(doc.createTextNode(str(managerList[1])))
+        root.appendChild(nodeManager)
+
+        for i in managerList[2:]:
+            nodelink = doc.createElement('Link')
+            nodeid = doc.createElement('ID')
+            nodeid.appendChild(doc.createTextNode(str(i[0])))
+            nodeNeighborID = doc.createElement('NeighborID')
+            nodeNeighborID.appendChild(doc.createTextNode(str(i[1])))
+            nodeRelativeSlotNumber = doc.createElement('RelativeSlotNumber')
+            nodeRelativeSlotNumber.appendChild(doc.createTextNode(str(i[0])))
+            nodeLinkSuperframeNum = doc.createElement('LinkSuperframeNum')
+            nodeLinkSuperframeNum.appendChild(doc.createTextNode("1"))
+            nodeActiveFlag = doc.createElement('ActiveFlag')
+            nodeActiveFlag.appendChild(doc.createTextNode("1"))
+            nodeChannelIndex = doc.createElement('ActiveFlag')
+            nodeChannelIndex.appendChild(doc.createTextNode("24"))
+            nodeSuperframeID = doc.createElement('SuperframeID')
+            nodeSuperframeID.appendChild(doc.createTextNode(str(i[0])))
+
+            nodelink.appendChild(nodeid)
+            nodelink.appendChild(nodeNeighborID)
+            nodelink.appendChild(nodeRelativeSlotNumber)
+            nodelink.appendChild(nodeActiveFlag)
+            nodelink.appendChild(nodeLinkSuperframeNum)
+            nodelink.appendChild(nodeChannelIndex)
+            nodelink.appendChild(nodeSuperframeID)
+
+            root.appendChild(nodelink)
     return  doc.toprettyxml()    
 
 def net_manager(value):
