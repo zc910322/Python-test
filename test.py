@@ -236,6 +236,46 @@ def createRoutetable(shortaddr, network_n):
     routetable[1] = tablenum
     return routetable
 
+def ActiveSlot_Calculation(shortaddr, path):
+
+    num = len(path)
+    i = 0
+    for key in path:
+        if(key == shortaddr):
+            i = i + 1
+            return i
+        i = i + 1
+    print "shortaddr not found!"
+    return -1
+
+def createSuperframe(shortaddr, network_n):
+    '''
+
+    :param shortaddr:短地址
+    :param network_n: WIA-PA对象
+    :return: superframe表，格式为[命令，数量，[短地址，时隙号]，[短地址，时隙号]，.......]
+    '''
+
+    superframe = []
+    num = 0
+    superframe.append("setsuperframe")
+    superframe.append(num)
+
+    for key in network_n.pathlist:
+        for i in key:
+            if(i == shortaddr):
+                table = []
+                tmp = ActiveSlot_Calculation(shortaddr, key)
+                if(tmp == -1):
+                    return -1
+                table.append(shortaddr)
+                table.append(tmp)
+                superframe.append(table)
+                num = num + 1
+    superframe[1] = num
+    return superframe
+
+
 for key in network_1.deviceinfo:
     if(network_1.deviceinfo[key] == '2'):
         routetable = createRoutetable(key, network_1)
@@ -243,15 +283,19 @@ for key in network_1.deviceinfo:
             print("routetable: %s" % routetable)
 
 
-mappingtable = createMappingtable(schedulinginfo, network_1, network_2)
-print("mappingtable: %s" %mappingtable)
-doc = multhreading_new.setxml(mappingtable)
-print("mapping xml: %s" %doc)
+# mappingtable = createMappingtable(schedulinginfo, network_1, network_2)
+# print("mappingtable: %s" %mappingtable)
+# doc = multhreading_new.setxml(mappingtable)
+# print("mapping xml: %s" %doc)
+superframe = createSuperframe('0002', network_1)
+print "superframe: %s" %superframe
+doc = multhreading_new.setxml(superframe)
+print "superframe xml: %s" %doc
 # doc = multhreading_new.setxml(routetable)
 # print("route xml: %s" %doc)
 # shortaddress = '002'
-h = httplib2.Http()
-resp, content = h.request("http://[2016::5]:12345/topology", "GET", doc)
-# resp, content = h.request("http://www.baidu.com/")
-print "resp: %s" %resp
-print "content: %s" %content
+# h = httplib2.Http()
+# resp, content = h.request("http://[2016::5]:12345/topology", "GET", doc)
+# # resp, content = h.request("http://www.baidu.com/")
+# print "resp: %s" %resp
+# print "content: %s" %content

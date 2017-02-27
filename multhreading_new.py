@@ -111,7 +111,40 @@ def setxml(managerList):
             nodeManager.appendChild(nodeName)
             nodeManager.appendChild(nodeName2)
 
-            root.appendChild(nodeManager)        
+            root.appendChild(nodeManager)
+    elif managerList[0] == 'setsuperframe':
+        doc = xml.dom.minidom.Document()
+        root = doc.createElement('superframe')  # 设置根节点的属性
+        root.setAttribute('xmlns', 'cquptSDN:superframe')
+        # 将根节点添加到文档对象中
+        doc.appendChild(root)
+
+        nodeManager = doc.createElement('num')
+        nodeManager.appendChild(doc.createTextNode(str(managerList[1])))
+        root.appendChild(nodeManager)
+
+        for i in managerList[2:]:
+            nodesuperframe = doc.createElement('superframe')
+            nodeid = doc.createElement('ID')
+            nodeid.appendChild(doc.createTextNode(str(i[0])))
+            nodeMultiple = doc.createElement('Multiple')
+            nodeMultiple.appendChild(doc.createTextNode("1"))
+            nodeNumberSlots = doc.createElement('NumberSlots')
+            nodeNumberSlots.appendChild(doc.createTextNode("128"))
+            nodeActiveFlag = doc.createElement('ActiveFlag')
+            nodeActiveFlag.appendChild(doc.createTextNode("1"))
+            nodeActiveSlot = doc.createElement('ActiveSlot')
+            nodeActiveSlot.appendChild(doc.createTextNode(str(i[1])))
+
+            nodesuperframe.appendChild(nodeid)
+            nodesuperframe.appendChild(nodeMultiple)
+            nodesuperframe.appendChild(nodeNumberSlots)
+            nodesuperframe.appendChild(nodeActiveFlag)
+            nodesuperframe.appendChild(nodeActiveSlot)
+            nodeManager.appendChild(nodesuperframe)
+
+            root.appendChild(nodeManager)
+
     return  doc.toprettyxml()    
 
 def net_manager(value):
