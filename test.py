@@ -50,8 +50,8 @@ class WIAPAnetwork(object):
                 routeID_down = (((int(path[-1]) << 1) >> 8) - 1) << 8
                 routeID_up = (int(path[-1]) << 1)
             if(self.deviceinfo[path[-1]] == "3"):
-                routeID_down = (int(path[-1]) & 0xff00) | (((int(path[-1]) << 1) - 1) & 0x00ff)
-                routeID_up = (int(path[-1]) & 0xff00) | ((int(path[-1]) << 1) & 0x00ff)
+                routeID_down = (int(path[-1], 16) & 0xff00) | (((int(path[-1], 16) << 1) - 1) & 0x00ff)
+                routeID_up = (int(path[-1], 16) & 0xff00) | ((int(path[-1], 16) << 1) & 0x00ff)
         else:
             print "路径起始地址错误！"
 
@@ -80,16 +80,16 @@ class WIAPAnetwork(object):
 
 
 
-# h = httplib2.Http(".cache")
-# resp, content = h.request("http://127.0.0.1:12345/", "GET")
-# print resp
-# print content
+h = httplib2.Http(".cache")
+resp, content = h.request("http://192.168.23.132:80/topology", "GET")
+print resp
+print content
 deviceinfo = {}
 topologyinfo = {}
 schedulinginfo = {}
-dom = xml.dom.minidom.parse("index.xml")
+# dom = xml.dom.minidom.parse("index.xml")
 # collection = DOMTree.documentElement
-# dom = xml.dom.minidom.parseString(content)
+dom = xml.dom.minidom.parseString(content)
 def analysis_topology(dom):
 
     deviceinfo = {}
@@ -132,12 +132,12 @@ for key in deviceinfo:
 for key in topologyinfo:
     print(key[0], 'corresponds to', key[1])
 
-network_1 = WIAPAnetwork(deviceinfo, topologyinfo, 1, '192.168.1.2')
-network_1.macaddress = "01:02:03:04:05:06"
-network_2 = WIAPAnetwork(deviceinfo, topologyinfo, 2, '192.168.1.3')
-network_2.macaddress = "01:02:03:04:05:07"
-network_1.shortest_path_creat('0004')
-network_2.shortest_path_creat('0004')
+network_1 = WIAPAnetwork(deviceinfo, topologyinfo, 1, '2016::18')
+network_1.macaddress = "00:12:34:56:80:49"
+network_2 = WIAPAnetwork(deviceinfo, topologyinfo, 2, '2016::7')
+network_2.macaddress = "38:2c:4a:b8:d0:0f"
+network_1.shortest_path_creat('0101')
+network_2.shortest_path_creat('0101')
 print("routeID: %s" %network_1.routeIDlist)
 schedulinginfo[(network_1.ipaddress, network_1.macaddress,tuple(network_1.get_routeID('0001')))]\
     = (network_2.ipaddress, network_2.macaddress,tuple(network_2.get_routeID('0001')))
@@ -306,23 +306,25 @@ for key in network_1.deviceinfo:
             print("routetable: %s" % routetable)
 
 
-# mappingtable = createMappingtable(schedulinginfo, network_1, network_2)
-# print("mappingtable: %s" %mappingtable)
-# doc = multhreading_new.setxml(mappingtable)
-# print("mapping xml: %s" %doc)
+mappingtable = createMappingtable(schedulinginfo, network_1, network_2)
+print("mappingtable: %s" %mappingtable)
+doc = multhreading_new.setxml(mappingtable)
+print("mapping xml: %s" %doc)
 # superframe = createSuperframe('0002', network_1)
 # print "superframe: %s" %superframe
 # doc = multhreading_new.setxml(superframe)
 # print "superframe xml: %s" %doc
-linktable = createLinktable('0002', network_1)
-print "linktable: %s" %linktable
-doc = multhreading_new.setxml(linktable)
-print "linktable xml: %s" %doc
+# linktable = createLinktable('0002', network_1)
+# print "linktable: %s" %linktable
+# doc = multhreading_new.setxml(linktable)
+# print "linktable xml: %s" %doc
 # doc = multhreading_new.setxml(routetable)
 # print("route xml: %s" %doc)
 # shortaddress = '002'
-# h = httplib2.Http()
-# resp, content = h.request("http://[2016::5]:12345/topology", "GET", doc)
+h = httplib2.Http()
+resp, content = h.request("http://192.168.23.132:80/mappingtable", "POST",doc,\
+                          headers = {'Content-Type': 'application/xml',\
+                                     'accept-encoding':'application/xml'})
 # # resp, content = h.request("http://www.baidu.com/")
-# print "resp: %s" %resp
-# print "content: %s" %content
+print "resp: %s" %resp
+print "content: %s" %content
